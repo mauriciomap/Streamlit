@@ -18,6 +18,7 @@ df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values("Date")
 
 df["Month"] = df["Date"].apply(lambda x: str(x.year) + "-" + str(x.month))
+st.sidebar.write('''# Filtros''')
 month = st.sidebar.selectbox("Mês", df["Month"].unique())
 
 df_filtered = df[df["Month"] == month]
@@ -32,8 +33,10 @@ fig_date = px.bar(df_filtered, x="Date", y="Total",
 col1.plotly_chart(fig_date, use_container_width=True)
 
 # 02 Tipo de produto mais vendido, contribuição por filial
-fig_prod = px.bar(df_filtered, x="Date", y="Product line",
-                  color="City", title="Faturamento por tipo de produto",
+prod_line_total = df_filtered.groupby("Product line")[["Total"]].sum().reset_index()
+fig_prod = px.bar(df_filtered, x="Total", y="Product line",
+                  color="City", 
+                  title="Faturamento por tipo de produto x Cidade",
                   orientation="h")
 col2.plotly_chart(fig_prod, use_container_width=True)
 
